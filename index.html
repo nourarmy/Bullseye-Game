@@ -3,10 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bullseye Game</title>
+    <title>Smile Code @youtube | Bullseye Game</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+  <div id="timer">Timer: <span id="timerValue">0</span> </div>
+  <div id="score">Score: <span id="scoreValue">0</span> <span id="scoreChange"></span></div>
+  <div id="arrows">Arrows left: <span id="arrowsLeft">5</span><span id="arrowsChange"></span></div>
     <svg id="game" viewBox="0 0 1000 400" overflow="visible">
       <linearGradient id="ArcGradient">
         <stop offset="0" stop-color="#fff" stop-opacity=".2" />
@@ -122,6 +125,18 @@
         />
       </g>
     </svg>
+    <!-- Add div elements for win and lose messages -->
+    <g id="winMessage" fill="#00FF00" >
+      <text opacity="0">You Win!</text>
+    </g>
+    
+    <g id="loseMessage" fill="#FF0000" >
+      <text opacity="0">You Lose!</text>
+    </g>
+    
+    
+
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.1/TweenMax.min.js"></script>
     <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/MorphSVGPlugin.min.js"></script>
     <script src="script.js"></script>
