@@ -7,41 +7,26 @@ let scoreValue = 0;
 let arrowsLeft = 5;
 let timerInterval;
 let distance; // Declare distance as a global variable
-const game = document.getElementById("game");
+let game = document.getElementById("game");
 
-game.addEventListener("touchstart", handleTouchStart, false);
-game.addEventListener("touchend", handleTouchEnd, false);
 
-let touchStartX = 0;
-let touchEndX = 0;
 
-function handleTouchStart(event) {
-  touchStartX = event.changedTouchestouches[0].clientX;
-}
-
-function handleTouchEnd(event) {
-  touchEndX = event.changedTouches[0].clientX;
-  handleSwipe();
-}
 
 function handleSwipe() {
-  // Calculate the swipe distance
   const swipeDistance = touchEndX - touchStartX;
-
-  // Customize this threshold according to your needs
   const swipeThreshold = 50;
 
-  // Check if the swipe distance is greater than the threshold
   if (Math.abs(swipeDistance) > swipeThreshold) {
-    // Determine the direction of the swipe
     const swipeDirection = swipeDistance > 0 ? "right" : "left";
+    
+    // Optionally log or handle the swipe direction
+    console.log("Swipe Direction:", swipeDirection);
 
-    // Call the function to shoot the arrow based on the swipe direction
-    if (swipeDirection === "right") {
-      shootArrow();
-    }
+    // Call the loose function when a swipe is detected
+    loose();
   }
 }
+
 
 
 
@@ -166,48 +151,94 @@ function aim(e) {
 
 function loose() {
   window.removeEventListener("mousemove", aim);
-  window.removeEventListener("mouseup", loose);
 
-  TweenMax.to("#bow", 0.4, {
-    scaleX: 1,
-    transformOrigin: "right center",
-    ease: Elastic.easeOut,
-  });
+  // Check if the swipe gesture is detected
+  if (swipeDetected) {
+    // Implement your logic for arrow shooting based on the swipe gesture
+    shootArrow();
+  } else {
+    // If no swipe, perform the original loose logic
+    TweenMax.to("#bow", 0.4, {
+      scaleX: 1,
+      transformOrigin: "right center",
+      ease: Elastic.easeOut,
+    });
 
-  TweenMax.to("#bow polyline", 0.4, {
-    attr: {
-      points: "88,200 88,250 88,300",
-    },
-    ease: Elastic.easeOut,
-  });
+    TweenMax.to("#bow polyline", 0.4, {
+      attr: {
+        points: "88,200 88,250 88,300",
+      },
+      ease: Elastic.easeOut,
+    });
 
-  let newArrow = document.createElementNS("http://www.w3.org/2000/svg", "use");
-  newArrow.setAttributeNS("http://www.w3.org/1999/xlink", "href", "#arrow");
-  arrows.appendChild(newArrow);
+    let newArrow = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "use"
+    );
+    newArrow.setAttributeNS(
+      "http://www.w3.org/1999/xlink",
+      "href",
+      "#arrow"
+    );
+    arrows.appendChild(newArrow);
 
-  let path = MorphSVGPlugin.pathDataToBezier("#arc");
+    let path = MorphSVGPlugin.pathDataToBezier("#arc");
 
-  TweenMax.to([newArrow], 0.5, {
-    force3D: true,
-    bezier: {
-      type: "cubic",
-      values: path,
-      autoRotate: ["x", "y", "rotation"],
-    },
-    onUpdate: hitTest,
-    onUpdateParams: ["{self}"],
-    onComplete: onMiss,
-    ease: Linear.easeNone,
-  });
+    TweenMax.to([newArrow], 0.5, {
+      force3D: true,
+      bezier: {
+        type: "cubic",
+        values: path,
+        autoRotate: ["x", "y", "rotation"],
+      },
+      onUpdate: hitTest,
+      onUpdateParams: ["{self}"],
+      onComplete: onMiss,
+      ease: Linear.easeNone,
+    });
 
-  TweenMax.to("#arc", 0.3, {
-    opacity: 0,
-  });
+    TweenMax.to("#arc", 0.3, {
+      opacity: 0,
+    });
 
-  TweenMax.set(".arrow-angle use", {
-    opacity: 0,
-  });
+    TweenMax.set(".arrow-angle use", {
+      opacity: 0,
+    });
+  }
 }
+
+let swipeDetected = false;
+
+game.addEventListener("touchstart", handleTouchStart, false);
+game.addEventListener("touchend", handleTouchEnd, false);
+
+let touchStartX = 0;
+let touchEndX = 0;
+
+function handleTouchStart(event) {
+  touchStartX = event.touches[0].clientX;
+}
+
+function handleTouchEnd(event) {
+  touchEndX = event.changedTouches[0].clientX;
+  handleSwipe();
+}
+
+function handleSwipe() {
+  const swipeDistance = touchEndX - touchStartX;
+  const swipeThreshold = 50;
+
+  if (Math.abs(swipeDistance) > swipeThreshold) {
+    const swipeDirection = swipeDistance > 0 ? "right" : "left";
+    swipeDetected = true;
+
+    // You can optionally log or handle the swipe direction
+    console.log("Swipe Direction:", swipeDirection);
+  } else {
+    swipeDetected = false;
+  }
+}
+
 
 function hitTest(tween) {
   let arrow = tween.target[0];
