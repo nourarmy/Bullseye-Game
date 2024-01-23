@@ -10,7 +10,11 @@ svg {
     top: 0;
     left: 0;
 }
+.target {
+  transform: translate(-50%, -50%);
+  transition: transform 0.5s ease-in-out;
 
+}
 #timer,
 #score,
 #arrows {
@@ -57,14 +61,3 @@ svg {
 #loseMessage {
   color: #f44336; /* Red color */
 }
-
-
-@media only screen and (max-width: 768px) {
-  #game {
-    max-width: 100%; 
-    height: auto;
-  }
-}
-
-
-
