@@ -32,10 +32,10 @@ function startGame() {
   updateTimer();
   updateScore();
   updateArrowsLeft();
-
-  window.addEventListener("touchstart", handleTouchStart, false);
-  window.addEventListener("touchmove", handleTouchMove, false);
-  window.addEventListener("touchend", handleTouchEnd, false);
+  
+  window.addEventListener("touchstart", handleTouchStart, { passive: false });
+  window.addEventListener("touchmove", handleTouchMove, { passive: false });
+  window.addEventListener("touchend", handleTouchEnd, { passive: false });
 }
 
 let target = {
