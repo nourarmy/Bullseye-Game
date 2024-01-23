@@ -217,10 +217,12 @@ let touchEndX = 0;
 
 function handleTouchStart(event) {
   touchStartX = event.touches[0].clientX;
+  console.log("Touch Start X:", touchStartX);
 }
 
 function handleTouchEnd(event) {
   touchEndX = event.changedTouches[0].clientX;
+  console.log("Touch End X:", touchEndX);
   handleSwipe();
 }
 
@@ -234,6 +236,7 @@ function handleSwipe() {
 
     // You can optionally log or handle the swipe direction
     console.log("Swipe Direction:", swipeDirection);
+    loose();
   } else {
     swipeDetected = false;
   }
