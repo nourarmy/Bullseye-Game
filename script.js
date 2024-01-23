@@ -7,8 +7,7 @@ let scoreValue = 0;
 let arrowsLeft = 5;
 let timerInterval;
 let distance; // Declare distance as a global variable
-let game = document.getElementById("game");
-
+let swipeDetected = false;
 
 
 
@@ -207,22 +206,24 @@ function loose() {
   }
 }
 
-let swipeDetected = false;
-
-game.addEventListener("touchstart", handleTouchStart, false);
-game.addEventListener("touchend", handleTouchEnd, false);
+window.addEventListener("touchstart", handleTouchStart, false);
+window.addEventListener("touchmove", handleTouchMove, false);
+window.addEventListener("touchend", handleTouchEnd, false);
 
 let touchStartX = 0;
 let touchEndX = 0;
 
 function handleTouchStart(event) {
   touchStartX = event.touches[0].clientX;
-  console.log("Touch Start X:", touchStartX);
 }
 
-function handleTouchEnd(event) {
-  touchEndX = event.changedTouches[0].clientX;
-  console.log("Touch End X:", touchEndX);
+function handleTouchMove(event) {
+  // Prevent scrolling
+  event.preventDefault();
+  touchEndX = event.touches[0].clientX;
+}
+
+function handleTouchEnd() {
   handleSwipe();
 }
 
@@ -234,13 +235,16 @@ function handleSwipe() {
     const swipeDirection = swipeDistance > 0 ? "right" : "left";
     swipeDetected = true;
 
-    // You can optionally log or handle the swipe direction
+    // Optionally log or handle the swipe direction
     console.log("Swipe Direction:", swipeDirection);
+
+    // Call the loose function when a swipe is detected
     loose();
   } else {
     swipeDetected = false;
   }
 }
+
 
 
 function hitTest(tween) {
