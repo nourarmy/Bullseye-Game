@@ -7,6 +7,44 @@ let scoreValue = 0;
 let arrowsLeft = 5;
 let timerInterval;
 let distance; // Declare distance as a global variable
+const game = document.getElementById("game");
+
+game.addEventListener("touchstart", handleTouchStart, false);
+game.addEventListener("touchend", handleTouchEnd, false);
+
+let touchStartX = 0;
+let touchEndX = 0;
+
+function handleTouchStart(event) {
+  touchStartX = event.touches[0].clientX;
+}
+
+function handleTouchEnd(event) {
+  touchEndX = event.changedTouches[0].clientX;
+  handleSwipe();
+}
+
+function handleSwipe() {
+  // Calculate the swipe distance
+  const swipeDistance = touchEndX - touchStartX;
+
+  // Customize this threshold according to your needs
+  const swipeThreshold = 50;
+
+  // Check if the swipe distance is greater than the threshold
+  if (Math.abs(swipeDistance) > swipeThreshold) {
+    // Determine the direction of the swipe
+    const swipeDirection = swipeDistance > 0 ? "right" : "left";
+
+    // Call the function to shoot the arrow based on the swipe direction
+    if (swipeDirection === "right") {
+      shootArrow();
+    }
+  }
+}
+
+
+
 
 function startGame() {
   timerValue = 0;
@@ -19,7 +57,7 @@ function startGame() {
   // Listen for the first arrow shot
   window.addEventListener("mousedown", function firstArrowListener() {
     // Remove this listener after the first arrow is shot
-    window.removeEventListener("mousedown", firstArrowListener);
+  window.removeEventListener("mousedown", firstArrowListener);
 
     // Start the timer
     timerInterval = setInterval(function () {
