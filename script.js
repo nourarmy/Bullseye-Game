@@ -6,10 +6,8 @@ let timerValue = 0;
 let scoreValue = 0;
 let arrowsLeft = 5;
 let timerInterval;
-let distance; // Declare distance as a global variable
+let distance;
 let swipeDetected = false;
-
-
 
 function handleSwipe() {
   const swipeDistance = touchEndX - touchStartX;
@@ -17,18 +15,15 @@ function handleSwipe() {
 
   if (Math.abs(swipeDistance) > swipeThreshold) {
     const swipeDirection = swipeDistance > 0 ? "right" : "left";
-    
-    // Optionally log or handle the swipe direction
+    swipeDetected = true;
+
     console.log("Swipe Direction:", swipeDirection);
 
-    // Call the loose function when a swipe is detected
     loose();
+  } else {
+    swipeDetected = false;
   }
 }
-
-
-
-
 
 function startGame() {
   timerValue = 0;
@@ -38,17 +33,9 @@ function startGame() {
   updateScore();
   updateArrowsLeft();
 
-  // Listen for the first arrow shot
-  window.addEventListener("mousedown", function firstArrowListener() {
-    // Remove this listener after the first arrow is shot
-  window.removeEventListener("mousedown", firstArrowListener);
-
-    // Start the timer
-    timerInterval = setInterval(function () {
-      timerValue++;
-      updateTimer();
-    }, 1000);
-  });
+  window.addEventListener("touchstart", handleTouchStart, false);
+  window.addEventListener("touchmove", handleTouchMove, false);
+  window.addEventListener("touchend", handleTouchEnd, false);
 }
 
 let target = {
@@ -91,17 +78,30 @@ function updateArrowsLeft() {
 }
 
 function draw(e) {
+  // Check if it's a touch event
+  if (e.type === "touchstart") {
+    e.preventDefault(); // Prevent scrolling
+    touchStartX = e.touches[0].clientX;
+  } else {
+    // It's a mouse event
+    touchStartX = e.clientX;
+  }
+
   randomAngle = Math.random() * Math.PI * 0.03 - 0.015;
-  TweenMax.to(".arrow-angle use", 0.3, {
-    opacity: 1,
-  });
+  TweenMax.to(".arrow-angle use", 0.3, { opacity: 1 });
+
+  // Use the appropriate event listeners
+  window.addEventListener("touchmove", aim);
+  window.addEventListener("touchend", loose);
   window.addEventListener("mousemove", aim);
   window.addEventListener("mouseup", loose);
-  aim(e);
+
+  // Use getMouseOrTouchSVG function
+  aim(getMouseOrTouchSVG(e));
 }
 
 function aim(e) {
-  let point = getMouseSVG(e);
+  let point = getMouseOrTouchSVG(e);
   point.x = Math.min(point.x, pivot.x - 7);
   point.y = Math.max(point.y, pivot.y + 7);
   let dx = point.x - pivot.x;
@@ -206,46 +206,20 @@ function loose() {
   }
 }
 
-window.addEventListener("touchstart", handleTouchStart, false);
-window.addEventListener("touchmove", handleTouchMove, false);
-window.addEventListener("touchend", handleTouchEnd, false);
-
-let touchStartX = 0;
-let touchEndX = 0;
-
 function handleTouchStart(event) {
+  event.preventDefault(); // Prevent scrolling
   touchStartX = event.touches[0].clientX;
 }
 
 function handleTouchMove(event) {
-  // Prevent scrolling
-  event.preventDefault();
+  event.preventDefault(); // Prevent scrolling
   touchEndX = event.touches[0].clientX;
+  handleSwipe();
 }
 
 function handleTouchEnd() {
   handleSwipe();
 }
-
-function handleSwipe() {
-  const swipeDistance = touchEndX - touchStartX;
-  const swipeThreshold = 50;
-
-  if (Math.abs(swipeDistance) > swipeThreshold) {
-    const swipeDirection = swipeDistance > 0 ? "right" : "left";
-    swipeDetected = true;
-
-    // Optionally log or handle the swipe direction
-    console.log("Swipe Direction:", swipeDirection);
-
-    // Call the loose function when a swipe is detected
-    loose();
-  } else {
-    swipeDetected = false;
-  }
-}
-
-
 
 function hitTest(tween) {
   let arrow = tween.target[0];
@@ -339,11 +313,8 @@ function onMiss() {
   }
 }
 
-
 function endGame() {
   clearInterval(timerInterval);
-
- 
 
   if (arrowsLeft === 0 && scoreValue < 400) {
     showLoseMessage();
@@ -355,15 +326,12 @@ function endGame() {
   setTimeout(resetGame, 1100); // Adjust the delay as needed
 }
 
-
 function resetGame() {
   // Clear or remove the "You Win" and "You Lose" messages
   let winMessage = document.getElementById("winMessage");
   let loseMessage = document.getElementById("loseMessage");
   winMessage.style.opacity = 0;
   loseMessage.style.opacity = 0;
-  
-
 
   // Reset other game elements as needed
   startGame(); // Start a new game
@@ -375,9 +343,6 @@ function resetGame() {
   }
 }
 
-
-
-
 document.getElementById("winMessage").style.opacity = 0;
 document.getElementById("loseMessage").style.opacity = 0;
 
@@ -387,12 +352,10 @@ function showWinMessage() {
   TweenMax.to(winMessage, 1, { opacity: 1, ease: Power2.easeOut });
 }
 
-
 function showLoseMessage() {
   let loseMessage = document.getElementById("loseMessage");
   TweenMax.to(loseMessage, 1, { opacity: 1, ease: Power2.easeOut });
 }
-
 
 function showMessage(selector) {
   TweenMax.killTweensOf(selector);
@@ -429,11 +392,19 @@ function showMessage(selector) {
   );
 }
 
-function getMouseSVG(e) {
-  cursor.x = e.clientX;
-  cursor.y = e.clientY;
+function getMouseOrTouchSVG(e) {
+  if (e.type === "touchstart" || e.type === "touchmove") {
+    cursor.x = e.touches[0].clientX;
+    cursor.y = e.touches[0].clientY;
+  } else {
+    cursor.x = e.clientX;
+    cursor.y = e.clientY;
+  }
+
   return cursor.matrixTransform(svg.getScreenCTM().inverse());
 }
+
+
 
 function getIntersection(segment1, segment2) {
   let dx1 = segment1.x2 - segment1.x1;
