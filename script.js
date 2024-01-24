@@ -9,21 +9,7 @@ let timerInterval;
 let distance;
 let swipeDetected = false;
 
-function handleSwipe() {
-  const swipeDistance = touchEndX - touchStartX;
-  const swipeThreshold = 50;
 
-  if (Math.abs(swipeDistance) > swipeThreshold) {
-    const swipeDirection = swipeDistance > 0 ? "right" : "left";
-    swipeDetected = true;
-
-    console.log("Swipe Direction:", swipeDirection);
-
-    loose();
-  } else {
-    swipeDetected = false;
-  }
-}
 
 function startGame() {
   timerValue = 0;
@@ -206,20 +192,6 @@ function loose() {
   }
 }
 
-function handleTouchStart(event) {
-  event.preventDefault(); // Prevent scrolling
-  touchStartX = event.touches[0].clientX;
-}
-
-function handleTouchMove(event) {
-  event.preventDefault(); // Prevent scrolling
-  touchEndX = event.touches[0].clientX;
-  handleSwipe();
-}
-
-function handleTouchEnd() {
-  handleSwipe();
-}
 
 function hitTest(tween) {
   let arrow = tween.target[0];
