@@ -1,63 +1,138 @@
 body { 
-    margin: 20px;
-    background: #222;
+  margin: 20px;
+  background: #222;
 }
 
 svg { 
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: -90px; /* Adjusted margin-top */
+  left: 0;
 }
+
 .target {
   transform: translate(-50%, -50%);
   transition: transform 0.5s ease-in-out;
-
+  
 }
+
+
 #timer,
 #score,
 #arrows {
-  font-family: 'Arial', sans-serif; /* Use a clear sans-serif font */
-  font-size: 20px; /* Adjust the font size based on your design */
-  font-weight: bold; /* Make the text bold for emphasis */
-  color: #fff; /* Set the text color to white */
-  margin-bottom: 10px; /* Add some space between the elements */
+font-family: 'Arial', sans-serif; /* Use a clear sans-serif font */
+font-size: 20px; /* Adjust the font size based on your design */
+font-weight: bold; /* Make the text bold for emphasis */
+color: #fff; /* Set the text color to white */
+margin-bottom: 10px; /* Add some space between the elements */
 }
 
 /* Style for specific elements if needed */
 #timer {
-  color: #F4531C; /* Custom color for timer, if desired */
+color: #F4531C; /* Custom color for timer, if desired */
 }
 
 #score {
-  color: #88ce02; /* Custom color for score, if desired */
+color: #88ce02; /* Custom color for score, if desired */
 }
 
 #arrows {
-  color: #359FD9; /* Custom color for arrows left, if desired */
+color: #359FD9; /* Custom color for arrows left, if desired */
 }
-#winMessage,#loseMessage{
-  font-family: 'Arial', sans-serif; /* Use a clear sans-serif font */
-  font-size: 50px; /* Adjust the font size based on your design */
-  font-weight: bold; /* Make the text bold for emphasis */
-  color: #fff; /* Set the text color to white */
-  margin-bottom: 90px;
-  
+
+#winMessage, #loseMessage {
+font-family: 'Arial', sans-serif; /* Use a clear sans-serif font */
+font-size: 50px; /* Adjust the font size based on your design */
+font-weight: bold; /* Make the text bold for emphasis */
+color: #fff; /* Set the text color to white */
+margin-bottom: 90px;
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+opacity: 0;
+background-color: #ff3333; /* Adjust the background color as needed */
+padding: 20px;
+border-radius: 10px;
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+z-index: 999;
 }
+
+#winMessage {
+color: #ffffff; /* Green color */
+}
+
+#loseMessage {
+color: #ffffff; /* Red color */
+}
+
 .message {
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+opacity: 0;
+transition: opacity 0.5s ease-in-out;
+}
+
+#timeoutMessage {
+  opacity: 0;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  opacity: 0;
-  transition: opacity 0.5s ease-in-out;
+  background-color: #ff3333; /* Adjust the background color as needed */
+  color: #fff; /* Adjust the text color as needed */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  
+}
+#rules {
+  display: flex;
+  flex-direction: column;
+  font-size:15px;
+  font-weight: bold;
+  border: 6px solid #72a8d1;
+  border-radius: 10px;
+  padding: 6px;
+  padding-top: 0%;
+  padding-bottom: 0%;
+  opacity: 0.8;
+  max-width: 500px;
+  position: absolute;
+  top: 450px;
+  left:100px;
+  background-color: #ffa500;
+  color: #000000;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-#winMessage {
-  color: #4caf50; /* Green color */
-}
-
-#loseMessage {
+#rules h2 {
   color: #f44336; /* Red color */
+  text-align: center;
+  font-size: 20px; /* Reduced font size */
+  margin-bottom: -8px;
+}
+
+#rules p {
+  font-size: 15px; /* Smaller font size */
+  margin-bottom: 0px; /* Reduced margin */
+}
+
+#rules ul {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0; /* Reduced margin */
+ 
+}
+
+#rules ul li {
+  margin-bottom: 4px; /* Reduced margin */
+  background-color: #88ce02; /* Green color */
+  padding: 1px 5px;
+  border-radius: 5px;
+  
 }
