@@ -9,6 +9,10 @@ let timerInterval;
 let distance;
 let swipeDetected = false;
 let touchStartX, touchEndX;
+const maxTimeLimit = 30;
+let gameStarted = false;
+let timeoutMessageTimeout;
+
 
 function handleSwipe() {
   const swipeDistance = touchEndX - touchStartX;
@@ -21,8 +25,9 @@ function handleSwipe() {
     console.log("Swipe Direction:", swipeDirection);
 
     loose();
-  } 
+  }
 }
+
 function handleTouchStart(event) {
   event.preventDefault(); // Prevent scrolling
   touchStartX = event.touches[0].clientX;
@@ -38,7 +43,6 @@ function handleTouchEnd() {
   handleSwipe();
 }
 
-
 function startGame() {
   timerValue = 0;
   scoreValue = 0;
@@ -46,10 +50,14 @@ function startGame() {
   updateTimer();
   updateScore();
   updateArrowsLeft();
-  
+  gameStarted = true; // Set the gameStarted flag to true
+
   window.addEventListener("touchstart", handleTouchStart, { passive: false });
   window.addEventListener("touchmove", handleTouchMove, { passive: false });
   window.addEventListener("touchend", handleTouchEnd, { passive: false });
+
+  // Move the interval setup inside the draw function
+  window.addEventListener("mousedown", draw);
 }
 
 let target = {
@@ -112,6 +120,15 @@ function draw(e) {
 
   // Use getMouseOrTouchSVG function
   aim(getMouseOrTouchSVG(e));
+  clearInterval(timerInterval);
+  timerInterval = setInterval(function () {
+    timerValue++;
+    updateTimer();
+
+    if (timerValue === maxTimeLimit && scoreValue < 400) {
+      endGame();
+    }
+  }, 1000);
 }
 
 function aim(e) {
@@ -313,17 +330,33 @@ function onMiss() {
   }
 }
 
+function showTimeoutMessage() {
+  let timeoutMessage = document.getElementById("timeoutMessage");
+  TweenMax.to(timeoutMessage, 1, { opacity: 1, ease: Power2.easeOut });
+  // Set the timeout to clear the timeout message
+  timeoutMessageTimeout = setTimeout(function () {
+    timeoutMessage.style.opacity = 0;
+  }, 2000); // Adjust the delay as needed
+}
+
+
+
 function endGame() {
   clearInterval(timerInterval);
 
-  if (arrowsLeft === 0 && scoreValue < 400) {
+  // Check if the maximum time limit is reached
+  if (timerValue >= maxTimeLimit) {
+    showTimeoutMessage();
+  } else if (arrowsLeft === 0 || scoreValue < 400) {
     showLoseMessage();
-  } else if (arrowsLeft <= 0 && scoreValue >= 400) {
+  } else if (arrowsLeft > 0 && scoreValue >= 400) {
     showWinMessage();
   }
 
-  // Add a delay before resetting the game to show end game messages
-  setTimeout(resetGame, 1100); // Adjust the delay as needed
+  if (gameStarted) {
+    // Add a delay before resetting the game to show end game messages
+    setTimeout(resetGame, 1100); // Adjust the delay as needed
+  }
 }
 
 function resetGame() {
@@ -332,6 +365,15 @@ function resetGame() {
   let loseMessage = document.getElementById("loseMessage");
   winMessage.style.opacity = 0;
   loseMessage.style.opacity = 0;
+
+  // Hide the timeout message
+  let timeoutMessage = document.getElementById("timeoutMessage");
+  timeoutMessage.style.opacity = 0;
+
+  gameStarted = false;
+
+  // Clear the timeout for the timeout message
+  clearTimeout(timeoutMessageTimeout);
 
   // Reset other game elements as needed
   startGame(); // Start a new game
@@ -342,6 +384,8 @@ function resetGame() {
     arrowsContainer.removeChild(arrowsContainer.firstChild);
   }
 }
+
+
 
 document.getElementById("winMessage").style.opacity = 0;
 document.getElementById("loseMessage").style.opacity = 0;
